@@ -4,6 +4,9 @@
 
 ## [Unreleased]
 
+- Fix `NoClassDefFoundError` of Jackson classes in IntelliJ IDEA 2026.3 when the plugin is installed as a single jar file
+- Reduce plugin size by removing unused dependencies (Jackson Kotlin module, kotlin-reflect and kotlin-stdlib)
+
 ## [0.8.0] - 2026-02-21
 
 - Support for Logback JsonEncoder with formattedMessage, reported by @unkle-jb

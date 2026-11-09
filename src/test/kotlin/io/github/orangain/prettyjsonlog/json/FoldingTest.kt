@@ -1,8 +1,8 @@
 package io.github.orangain.prettyjsonlog.json
 
 import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import junit.framework.TestCase
 
 class FoldingTest : TestCase() {
@@ -11,7 +11,7 @@ class FoldingTest : TestCase() {
         val jsonCreator: (ObjectNode) -> Unit
     )
 
-    private val mapper = jacksonObjectMapper()
+    private val mapper = ObjectMapper()
 
     private val params = listOf(
         Param("Empty object") { },

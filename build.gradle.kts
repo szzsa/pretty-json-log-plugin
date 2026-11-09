@@ -1,3 +1,4 @@
+import org.gradle.api.attributes.Usage
 import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.markdownToHTML
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
@@ -29,10 +30,26 @@ repositories {
     }
 }
 
+// Libraries in this configuration are copied into the plugin jar itself (see the `jar` task below) instead of being shipped
+// as separate lib/*.jar files. The IDE does not expose its own Jackson 2.x libraries to plugins (since IntelliJ IDEA 2026.3),
+// and a single self-contained jar keeps working even when it is copied into the IDE's plugins directory on its own.
+val bundled: Configuration by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+    attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+    }
+}
+
+configurations {
+    compileOnly { extendsFrom(bundled) }
+    testImplementation { extendsFrom(bundled) }
+}
+
 // Dependencies are managed with Gradle version catalog - read more: https://docs.gradle.org/current/userguide/version_catalogs.html
 dependencies {
     testImplementation(libs.junit)
-    implementation(libs.jacksonModuleKotlin)
+    bundled(libs.jacksonDatabind)
 
     // IntelliJ Platform Gradle Plugin Dependencies Extension - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-dependencies-extension.html
     intellijPlatform {
@@ -129,6 +146,19 @@ kover {
 tasks {
     wrapper {
         gradleVersion = providers.gradleProperty("gradleVersion").get()
+    }
+
+    jar {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        from(bundled.map { zipTree(it) }) {
+            exclude(
+                "META-INF/MANIFEST.MF",
+                "META-INF/maven/**",
+                // Multi-release variants are optional optimizations, and the jar is not multi-release.
+                "META-INF/versions/**",
+                "module-info.class",
+            )
+        }
     }
 
     publishPlugin {

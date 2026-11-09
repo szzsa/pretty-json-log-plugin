@@ -1,7 +1,7 @@
 [versions]
 # libraries
 junit = "4.13.2"
-jacksonModuleKotlin = "2.21.0"
+jackson = "2.21.0"
 
 # plugins
 changelog = "2.5.0"
@@ -12,7 +12,7 @@ qodana = "2025.3.1"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
-jacksonModuleKotlin = { group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin", version.ref = "jacksonModuleKotlin" }
+jacksonDatabind = { group = "com.fasterxml.jackson.core", name = "jackson-databind", version.ref = "jackson" }
 
 [plugins]
 changelog = { id = "org.jetbrains.changelog", version.ref = "changelog" }
